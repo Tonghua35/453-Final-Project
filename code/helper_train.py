@@ -7,11 +7,14 @@ def train_model(model, num_epochs, train_loader,
                 valid_loader, test_loader, optimizer,
                 device, logging_interval=50,
                 scheduler=None,
-                scheduler_on='valid_acc'):
+                scheduler_on='valid_acc',
+                early_stop_patience=2,
+                early_stop_train_acc=0.99):
 
     start_time = time.time()
     minibatch_loss_list, train_acc_list, valid_acc_list = [], [], []
     
+    val_decrease_count = 0
     for epoch in range(num_epochs):
 
         model.train()
@@ -49,6 +52,14 @@ def train_model(model, num_epochs, train_loader,
 
         elapsed = (time.time() - start_time)/60
         print(f'Time elapsed: {elapsed:.2f} min')
+        
+        if early_stop_patience != 0:
+            if len(valid_acc_list) >= 2 and valid_acc_list[-1] < valid_acc_list[-2]:
+                val_decrease_count+=1
+            if val_decrease_count >= early_stop_patience:
+                if train_acc_list[-1] >= early_stop_train_acc:
+                    print(f"Early stopping")
+                    break
         
         if scheduler is not None:
 
