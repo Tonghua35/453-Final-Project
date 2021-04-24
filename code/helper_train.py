@@ -1,9 +1,7 @@
 import time
 import torch
+import numpy as np
 from helper_evaluation import compute_accuracy
-
-def count_val_decrease(val_list):
-    
 
 def train_model(model, num_epochs, train_loader,
                 valid_loader, test_loader, optimizer,
