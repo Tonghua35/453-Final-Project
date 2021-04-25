@@ -15,14 +15,17 @@ def train_model(model, num_epochs, train_loader,
     start_time = time.time()
     minibatch_loss_list, train_acc_list, valid_acc_list = [], [], []
     
+    
+    
     for epoch in range(num_epochs):
 
+        print(f"Learning rate: {scheduler.get_last_lr()}")
+        
         model.train()
+        
         for batch_idx, (features, targets) in enumerate(train_loader):
-
             features = features.to(device)
             targets = targets.to(device)
-
             # ## FORWARD AND BACK PROP
             logits = model(features)
             loss = torch.nn.functional.cross_entropy(logits, targets)
@@ -32,7 +35,6 @@ def train_model(model, num_epochs, train_loader,
 
             # ## UPDATE MODEL PARAMETERS
             optimizer.step()
-
             # ## LOGGING
             minibatch_loss_list.append(loss.item())
             if not batch_idx % logging_interval:
@@ -40,9 +42,12 @@ def train_model(model, num_epochs, train_loader,
                       f'| Batch {batch_idx:04d}/{len(train_loader):04d} '
                       f'| Loss: {loss:.4f}')
 
+        
         model.eval()
         with torch.no_grad():  # save memory during inference
+            
             train_acc = compute_accuracy(model, train_loader, device=device)
+            
             valid_acc = compute_accuracy(model, valid_loader, device=device)
             print(f'Epoch: {epoch+1:03d}/{num_epochs:03d} '
                   f'| Train: {train_acc :.2f}% '
@@ -70,6 +75,8 @@ def train_model(model, num_epochs, train_loader,
                 scheduler.step(valid_acc_list[-1])
             elif scheduler_on == 'minibatch_loss':
                 scheduler.step(minibatch_loss_list[-1])
+            elif scheduler_on == 'epoch':
+                scheduler.step()
             else:
                 raise ValueError(f'Invalid `scheduler_on` choice.')
         
