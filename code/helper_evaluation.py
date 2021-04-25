@@ -15,17 +15,6 @@ def set_all_seeds(seed):
     torch.cuda.manual_seed_all(seed)
 
 
-def set_deterministic():
-    if torch.cuda.is_available():
-        torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.deterministic = True
-
-    if torch.__version__ <= Version("1.7"):
-        torch.set_deterministic(True)
-    else:
-        torch.use_deterministic_algorithms(True)
-
-
 def compute_accuracy(model, data_loader, device):
 
     with torch.no_grad():
@@ -43,8 +32,8 @@ def compute_accuracy(model, data_loader, device):
             num_examples += targets.size(0)
             correct_pred += (predicted_labels == targets).sum()
     return correct_pred.float()/num_examples * 100
-
-
+    
+    
 def compute_confusion_matrix(model, data_loader, device):
 
     all_targets, all_predictions = [], []

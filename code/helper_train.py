@@ -9,7 +9,7 @@ def train_model(model, num_epochs, train_loader,
                 scheduler=None,
                 scheduler_on='valid_acc',
                 early_stop_patience=6,
-                early_stop_patience_on_large_train=2
+                early_stop_patience_on_large_train=2,
                 early_stop_train_acc=0.99):
 
     start_time = time.time()
