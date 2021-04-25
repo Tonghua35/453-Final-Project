@@ -10,7 +10,7 @@ def train_model(model, num_epochs, train_loader,
                 scheduler_on='valid_acc',
                 early_stop_patience=6,
                 early_stop_patience_on_large_train=2,
-                early_stop_train_acc=0.99):
+                early_stop_train_acc=98):
 
     start_time = time.time()
     minibatch_loss_list, train_acc_list, valid_acc_list = [], [], []
@@ -53,10 +53,14 @@ def train_model(model, num_epochs, train_loader,
         elapsed = (time.time() - start_time)/60
         print(f'Time elapsed: {elapsed:.2f} min')
         
-        if early_stop_patience != 0:
-            if np.max(valid_acc_list) > np.max(valid_acc_list[-early_stop_patience:]) or (
-               np.max(valid_acc_list) > np.max(valid_acc_list[-early_stop_patience_on_large_train:]) 
-                and train_acc_list[-1] >= early_stop_train_acc):
+        if ((
+                early_stop_patience != 0 
+                and np.max(valid_acc_list) > np.max(valid_acc_list[-early_stop_patience:]))
+            or (
+                early_stop_patience_on_large_train != 0
+                and train_acc_list[-1] >= early_stop_train_acc
+                and np.max(valid_acc_list) > np.max(valid_acc_list[-early_stop_patience_on_large_train:])
+                )):
                 print(f"Early stopping")
                 break
         
