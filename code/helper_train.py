@@ -18,9 +18,6 @@ def train_model(model, num_epochs, train_loader,
     
     
     for epoch in range(num_epochs):
-
-        print(f"Learning rate: {scheduler.get_last_lr()}")
-        
         model.train()
         
         for batch_idx, (features, targets) in enumerate(train_loader):
